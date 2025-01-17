@@ -110,6 +110,8 @@ async function analyzeCode(codeSnippet, filePath) {
 const SKIP_STRINGS = [
     "Write your JavaScript here",
     "Hello, World!",
+    "Velo API Reference:",
+    "Write your Javascript"
 ];
 
 /**
