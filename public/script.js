@@ -72,7 +72,7 @@ function initiateUploadForm() {
         document.getElementById("status").innerText = "Uploading and analyzing...";
         document.getElementById("results-table").innerHTML = ""; // Clear old results
         document.getElementById("progress-bar").style.width = "0%"; // Reset progress bar
-        document.getElementById("progress-text").innerText = "Files: 0/0 analyzed, 0 skipped";
+        document.getElementById("progress-text").innerText = "0/0 Files analyzed, 0 skipped. Issues found: 0";
 
         try {
             const response = await fetch("/upload", {
@@ -117,13 +117,14 @@ function render(data, message) {
         const analyzed = data.files.analyzed;
         const total = data.files.total;
         const skipped = data.files.skipped;
+        const totalIssues = data.totalIssues;
 
         // Update progress bar
         const progressPercent = total > 0 ? (analyzed/ total) * 100 : 0;
         document.getElementById("progress-bar").style.width = `${progressPercent}%`;
 
         // Update progress text
-        document.getElementById("progress-text").innerText = `Files: ${analyzed}/${total} analyzed, ${skipped} skipped`;
+        document.getElementById("progress-text").innerText = `${analyzed}/${total} files analyzed, ${skipped} skipped. Issues found: ${totalIssues || data.issues.length}`;
     }
 
     if (data?.issues?.length > 0) {

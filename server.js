@@ -52,7 +52,8 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             analyzed: 0,
             skipped: 0,
         },
-        issues: []
+        issues: [], 
+        totalIssues: 0,
     }
     const { email, website, experiance, role } = req.body;
 
@@ -117,14 +118,17 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                     const snippet = content.slice(0, 2000);
                     const result = await analyzeCode(snippet, filePath);
 
-                    if (result) data.issues = [...data.issues, ...result];
+                    if (result){
+                        data.issues = [...data.issues, ...result];
+                        totalIssues = data.issues.length;
+                    }
 
                     // Step 4: Send progress update
                     sendEvent({
                         message: "Analyzing files...",
                         data: {
                             files: data.files,
-                            issues: data.issues.slice(0, 4)
+                            issues: data.issues.slice(0, 5)
                         },
                     });
                 }
