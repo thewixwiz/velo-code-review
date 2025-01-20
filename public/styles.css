@@ -1,0 +1,218 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+h1,
+h2,
+p {
+    text-align: center;
+}
+
+p{
+    margin: 0 auto;
+    color: rgb(70, 70, 70);
+    max-width: 70%;
+}
+
+/* General button styling */
+button {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Hover effect */
+button:hover {
+    background: linear-gradient(135deg, #0056b3, #003d80);
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Active button effect */
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Add some margin to buttons */
+button:not(:last-child) {
+    margin-right: 10px;
+}
+
+/* Style form container */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Flex container for inputs */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.loader {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 20px;
+}
+
+/* Style inputs and select dropdown */
+input, select {
+    flex: 1;
+    min-width: 180px; /* Prevents elements from shrinking too much */
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+}
+
+/* Focus effect */
+input:focus, select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 8px rgba(0, 91, 187, 0.2);
+}
+/* File input styling */
+input[type="file"] {
+    padding: 10px;
+    border: 2px dashed #007bff;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="file"]:hover {
+    border-color: #0056b3;
+    background: #e9f0ff;
+}
+
+.progress-container {
+    width: 100%;
+    background: #ddd;
+    border-radius: 10px;
+    margin-top: 10px;
+    height: 20px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #007bff;
+    border-radius: 10px;
+    transition: width 0.4s ease-in-out;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 10px 15px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+}
+
+td{
+    max-width: 300px;
+    scrollbar-width: 0;
+    overflow: auto;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover{
+    background: linear-gradient(135deg, #0056b3, #003d80);
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.description {
+    cursor:pointer;
+}
+
+.center{
+    text-align: center;
+}
+
+.small{
+    font-size: 0.8rem;
+}
+
+.category-1 {
+    background-color: #ecc9ff;
+}
+
+.category-2 {
+    background-color: #d3e8ff;
+}
+
+.category-3 {
+    background-color: rgb(255, 254, 212);
+}
+
+.category-4 {
+    background-color: rgb(255, 197, 208);
+}
+
+.severity-1 {
+    background-color:  #fdffcd;
+}
+
+/* Light green */
+.severity-2 {
+    background-color: rgb(255, 235, 197);
+}
+
+/* Light yellow */
+.severity-3 {
+    background-color: #f8d7da;
+}
+
+/* Light red */
+pre {
+    margin: 0;
+    width: fit-content;
+    background: #eee;
+    padding: 5px;
+    border-radius: 5px;
+}

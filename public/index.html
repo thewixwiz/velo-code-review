@@ -1,120 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Analysis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 10px;
-            background-color: #f4f4f4;
-        }
-        h2 {
-            text-align: center;
-        }
-        form {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        .severity-1 { background-color: #d4edda; } /* Light green */
-        .severity-2 { background-color: #fff3cd; } /* Light yellow */
-        .severity-3 { background-color: #f8d7da; } /* Light red */
-        pre {
-            background: #eee;
-            padding: 5px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
 
+<body>
+    <h1>Velo Code Review</h1>
     <h2>Upload Code for Analysis</h2>
+    <p class="small">Uploaded code may be stored for research and development purposes. We may also reach out to the email provided
+        (once) for feedback and to offer related services. By uploading your code you are accepting these
+        terms.</p>
+
+    <div id="loader" class="loader" style="display: none;">
+        <p>Loading data...</p>
+    </div>
     <form id="uploadForm">
+        <div class="form-row">
+            <input type="email" id="emailInput" placeholder="Your Email" required>
+            <input type="url" id="websiteInput" placeholder="Your Website" required>
+
+            <select id="roleInput" required>
+                <option value="" disabled selected>I Am a...</option>
+                <option value="founder">Founder</option>
+                <option value="owner">Business Owner</option>
+                <option value="hobbyist">Hobbyist</option>
+                <option value="developer">Developer</option>
+                <option value="agency-owner">Agency Owner</option>
+                <option value="designer">Designer</option>
+                <option value="freelancer">Freelancer</option>
+                <option value="marketer">Marketer</option>
+                <option value="consultant">Consultant</option>
+                <option value="student">Student</option>
+                <option value="other">Other</option>
+            </select>
+
+            <select id="experienceInput" required>
+                <option value="" disabled selected>Choose Your Experience</option>
+                <option value="no-coding">No coding skills (copied code & ChatGPT)</option>
+                <option value="basic-web-no-wix">Basic web dev skills, but no Wix (Velo) experience</option>
+                <option value="advanced-web-no-wix">Advanced web dev skills, but no Wix (Velo) experience</option>
+                <option value="other-programming-no-wix">Other programming skills, but no Wix (Velo) experience</option>
+                <option value="extensive-wix-general">Extensive experience developing on & off Wix (Velo)</option>
+                <option value="wix-only">Experience with Wix (Velo), but not general web development</option>
+            </select>
+
+        </div>
         <input type="file" id="fileInput" accept=".zip" required>
-        <button type="submit">Upload</button>
+        <a href="thewixwiz.com">How to get my Velo files?</a>
+        <button type="submit">Upload and Review</button>
+        <p class="small">Below you will see the first 5 results. The full report link will be sent to the email provided.</p>
     </form>
+    <br>
+    <!-- Progress bar container -->
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
     <p id="status"></p>
+    <p id="progress-text">Files: 0/0 analyzed, 0 skipped</p>
 
     <h2>Analysis Results</h2>
+    <p class="small">AI can make mistakes. Verify and test results before publishing changes.</p>
+    <p><span>Need help with your code? <a href="https://www.thewixwiz.com">Contact the Wix Wiz</a></span></p>
     <table>
         <thead>
             <tr>
-                <th>Severity</th>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Page</th>
+                <th class="clickable" onclick="sortTable('severity')">Severity ▲▼</th>
+                <th class="clickable" onclick="sortTable('page')">Page ▲▼</th>
                 <th>Line</th>
-                <th>Location</th>
+                <th class="clickable" onclick="sortTable('location')">Location ▲▼</th>
+                <th class="clickable" onclick="sortTable('category')">Category ▲▼</th>
                 <th>Relevant Code</th>
+                <th>Description</th>
             </tr>
         </thead>
         <tbody id="results-table">
             <!-- Analysis results will be inserted here -->
         </tbody>
     </table>
-
-    <script>
-        document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const fileInput = document.getElementById("fileInput").files[0];
-            if (!fileInput) return alert("Please select a file");
-
-            const formData = new FormData();
-            formData.append("codeFolder", fileInput);
-
-            document.getElementById("status").innerText = "Uploading and analyzing...";
-
-            try {
-                const response = await fetch("/upload", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const results = await response.json();
-                document.getElementById("status").innerText = "Analysis complete!";
-
-                const tableBody = document.getElementById("results-table");
-                tableBody.innerHTML = ""; // Clear previous results
-
-                results.forEach(result => {
-                    const row = document.createElement("tr");
-                    row.className = `severity-${result.severity}`;
-
-                    row.innerHTML = `
-                        <td>${result.severity}</td>
-                        <td>${result.category}</td>
-                        <td>${result.description}</td>
-                        <td>${result.page}</td>
-                        <td>${result.line}</td>
-                        <td>${result.location}</td>
-                        <td><pre>${result.relevant_code}</pre></td>
-                    `;
-
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                document.getElementById("status").innerText = "Upload failed!";
-                console.error("Error uploading file:", error);
-            }
-        });
-    </script>
+    <script src="mockData.js"></script>
+    <script src="script.js"></script>
 
 </body>
+
 </html>

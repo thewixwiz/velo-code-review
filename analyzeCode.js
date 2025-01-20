@@ -132,7 +132,7 @@ async function analyzeAllFiles(extractPath) {
     for (const [filePath, content] of Object.entries(codeFiles)) {
         if (shouldSkipFile(content)) {
             console.log(`🚫 Skipping file: ${filePath} (Matched exclusion keyword)`);
-            continue; // Skip this file
+            continue;
         }
         const snippet = content.slice(0, 2000); // Limit tokens
         const issues = await analyzeCode(snippet, filePath);
@@ -142,4 +142,4 @@ async function analyzeAllFiles(extractPath) {
     return allIssues;
 }
 
-module.exports = { analyzeAllFiles };
+module.exports = { shouldSkipFile, analyzeCode };
