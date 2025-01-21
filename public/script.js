@@ -144,7 +144,7 @@ function updateResultsTable() {
 
         // Limit description to 100 characters
         const shortDesc = issue.description.length > 30
-            ? issue.description.substring(0, 30) + "...show more"
+            ? issue.description.substring(0, 30) + "<span class='show-more'>...show more</span>"
             : issue.description;
 
         row.innerHTML = `

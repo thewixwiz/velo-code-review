@@ -172,6 +172,10 @@ td{
     cursor:pointer;
 }
 
+.show-more {
+    color: #0056b3;
+}
+
 .center{
     text-align: center;
 }
