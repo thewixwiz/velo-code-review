@@ -114,7 +114,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                     }
 
                     //const snippet = content.slice(0, 2000);
-                    const result = await analyzeCode(snippet, filePath);
+                    const result = await analyzeCode(content, filePath);
 
                     if (result){
                         data.issues = [...data.issues, ...result];
