@@ -103,8 +103,6 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             sendEvent({ message: "Extraction complete", data });
 
             try {
-                const issues = [];
-
                 // Step 3: Analyze each file and stream progress
                 for (const [filePath, content] of Object.entries(codeFiles)) {
                     data.files.analyzed++;
@@ -128,7 +126,8 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                         message: "Analyzing files...",
                         data: {
                             files: data.files,
-                            issues: data.issues.slice(0, 5)
+                            issues: data.issues.slice(0, 5);
+                            totalIssues,
                         },
                     });
                 }
