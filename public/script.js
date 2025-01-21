@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showLoader(); // Show loading animation
         await fetchDataById(id);
         hideLoader(); // Hide loading animation
-    }{
+    } {
         initiateUploadForm();
     }
 });
@@ -95,8 +95,13 @@ function initiateUploadForm() {
                 events.forEach(event => {
                     console.log("event", event);
                     if (event.startsWith("data: ")) {
-                        const { data, message } = JSON.parse(event.replace("data: ", ""));
-                        render(data, message)
+                        try {
+                            const { data, message } = JSON.parse(event.replace("data: ", ""));
+                            render(data, message)
+                        } catch (error) {
+                            console.error("Error receiving event", error);
+                            document.getElementById("status").innerText = "There was an error processing. Results may be partial.";
+                        }
                     }
                 });
 
@@ -120,7 +125,7 @@ function render(data, message) {
         const totalIssues = data.totalIssues;
 
         // Update progress bar
-        const progressPercent = total > 0 ? (analyzed/ total) * 100 : 0;
+        const progressPercent = total > 0 ? (analyzed / total) * 100 : 0;
         document.getElementById("progress-bar").style.width = `${progressPercent}%`;
 
         // Update progress text
@@ -154,7 +159,7 @@ function updateResultsTable() {
                 <td>${issue.location}</td>
                 <td class="category-${CATEGORIES.indexOf(issue.category) + 1}">${issue.category}</td>
                 <td><pre>${issue.relevant_code}</pre></td>
-                <td class="description" onclick="toggleDescription(this, "${issue.description.replace(/'/g, "&apos;")}")">
+                <td class="description" onclick="toggleDescription(this, '${issue.description.replace(/['"`]/g, '*')}')">
                     ${shortDesc}
                 </td> 
             `;

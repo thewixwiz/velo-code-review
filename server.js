@@ -100,7 +100,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             const codeFiles = readCodeFiles(extractPath);
             const totalFiles = Object.keys(codeFiles).length;
             data.files.total = totalFiles;
-            sendEvent({ message: "Extraction complete", data });
+            sendEvent({ message: "Extraction complete. Starting Anaylsis...", data });
 
             try {
                 // Step 3: Analyze each file and stream progress
