@@ -126,7 +126,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                         message: "Analyzing files...",
                         data: {
                             files: data.files,
-                            issues: data.issues.slice(0, 5);
+                            issues: data.issues.slice(0, 5),
                             totalIssues,
                         },
                     });
