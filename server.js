@@ -113,7 +113,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                         continue;
                     }
 
-                    const snippet = content.slice(0, 2000);
+                    //const snippet = content.slice(0, 2000);
                     const result = await analyzeCode(snippet, filePath);
 
                     if (result){

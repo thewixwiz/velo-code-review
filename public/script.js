@@ -154,7 +154,7 @@ function updateResultsTable() {
                 <td>${issue.location}</td>
                 <td class="category-${CATEGORIES.indexOf(issue.category) + 1}">${issue.category}</td>
                 <td><pre>${issue.relevant_code}</pre></td>
-                <td class="description" onclick="toggleDescription(this, '${issue.description.replace(/'/g, "&apos;")}')">
+                <td class="description" onclick="toggleDescription(this, "${issue.description.replace(/'/g, "&apos;")}")">
                     ${shortDesc}
                 </td> 
             `;
