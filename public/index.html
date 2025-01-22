@@ -50,8 +50,9 @@
 
         </div>
         <input type="file" id="fileInput" accept=".zip" required>
+        <p class="small">Only the first 5000 characters of up to 50 files will be analysed.</p>
         <a href="https://sable-snowshoe-833.notion.site/Velo-Review-Guide-181a0672c4c3802aae80cbc3b4b2f0a4?pvs=4" target="_blank">How to get my Velo files?</a>
-        <button type="submit">Upload and Review</button>
+        <button id="submitButton" type="submit">Upload and Review</button>
         <p class="small">Below you will see the first 5 results. The full report link will be sent to the email provided.</p>
     </form>
     <br>
@@ -60,11 +61,11 @@
         <div id="progress-bar" class="progress-bar"></div>
     </div>
     <p id="status"></p>
-    <p id="progress-text">0/0 Files analyzed, 0 skipped. Issues found: 0</p>
+    <p id="progress-text">Loading...</p>
 
-    <h2>Analysis Results</h2>
+    <h2 id="analysis-header">Analysis Results (Example)</h2>
     <p class="small">AI can make mistakes. Verify and test results before publishing changes.</p>
-    <p><span>Need help with your code? <a href="https://www.thewixwiz.com">Contact the Wix Wiz</a></span></p>
+    <p><span>Need help with your code? <a href="https://www.thewixwiz.com" target="_blank">Contact the Wix Wiz</a></span></p>
     <table>
         <thead>
             <tr>

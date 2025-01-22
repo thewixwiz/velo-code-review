@@ -4,12 +4,15 @@ const unzipper = require("unzipper");
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const dotenv = require("dotenv");
 
 const { shouldSkipFile, analyzeCode } = require("./analyzeCode");
 const { readCodeFiles } = require("./readCodeFiles");
 
+dotenv.config();
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const UPLOADS_DIR = "uploads";
 
 app.use(express.static("public"));
@@ -52,7 +55,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             analyzed: 0,
             skipped: 0,
         },
-        issues: [], 
+        issues: [],
         totalIssues: 0,
     }
     const { email, website, experiance, role } = req.body;
@@ -103,20 +106,56 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             sendEvent({ message: "Extraction complete. Starting Anaylsis...", data });
 
             try {
-                // Step 3: Analyze each file and stream progress
+                const MAX_FREE_ISSUES = 5;
+                const MAX_ANALYSIS_FILES = 50;
+                const MAX_FILE_CHARACTERS = 5000;
                 for (const [filePath, content] of Object.entries(codeFiles)) {
-                    data.files.analyzed++;
-
+                    
+                    if (data.files.analyzed >= MAX_ANALYSIS_FILES) {
+                        console.log(`🚨 Analysis file limit reached ${MAX_ANALYSIS_FILES}. Skipping remaining files.`);
+                        sendEvent({
+                            message: `🚨 Analysis file limit reached ${MAX_ANALYSIS_FILES}. Skipping remaining files.`,
+                            data: {
+                                files: data.files,
+                                issues: data.issues.slice(0, MAX_FREE_ISSUES),
+                                totalIssues,
+                            },
+                        });
+                        data.files.skipped++;
+                        break;
+                    }
+                    
                     if (shouldSkipFile(content)) {
                         data.files.skipped++;
-                        console.log(`🚫 Skipping file: ${filePath} (Matched exclusion keyword)`);
+                        console.log(`🚫 Skipping file: ${path.basename(filePath)} (Matched exclusion keyword)`);
+                        sendEvent({
+                            message: `Empty file ${path.basename(filePath)} skipped...`,
+                            data: {
+                                files: data.files,
+                                issues: data.issues.slice(0, MAX_FREE_ISSUES),
+                                totalIssues,
+                            },
+                        });
                         continue;
                     }
 
-                    //const snippet = content.slice(0, 2000);
-                    const result = await analyzeCode(content, filePath);
+                    let snippet = content;
+                    if (snippet.length > MAX_FILE_CHARACTERS) {
+                        snippet = content.slice(0, MAX_FILE_CHARACTERS);
+                        sendEvent({
+                            message: `Long file ${path.basename(filePath)} partially skipped...`,
+                            data: {
+                                files: data.files,
+                                issues: data.issues.slice(0, MAX_FREE_ISSUES),
+                                totalIssues,
+                            },
+                        });
+                    }
 
-                    if (result){
+                    const result = await analyzeCode(snippet, filePath);
+
+                    if (result) {
+                        data.files.analyzed++;
                         data.issues = [...data.issues, ...result];
                         totalIssues = data.issues.length;
                     }
@@ -126,7 +165,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
                         message: "Analyzing files...",
                         data: {
                             files: data.files,
-                            issues: data.issues.slice(0, 5),
+                            issues: data.issues.slice(0, MAX_FREE_ISSUES),
                             totalIssues,
                         },
                     });

@@ -73,8 +73,12 @@ function initiateUploadForm() {
         document.getElementById("results-table").innerHTML = ""; // Clear old results
         document.getElementById("progress-bar").style.width = "0%"; // Reset progress bar
         document.getElementById("progress-text").innerText = "0/0 Files analyzed, 0 skipped. Issues found: 0";
+        document.getElementById("analysis-header").innerHTML = "Analysis Results"
+        document.getElementById("submitButton").disabled = true;
 
         try {
+            document.getElementById("uploadForm").style.display = "none"; 
+
             const response = await fetch("/upload", {
                 method: "POST",
                 body: formData
@@ -125,7 +129,7 @@ function render(data, message) {
         const totalIssues = data.totalIssues;
 
         // Update progress bar
-        const progressPercent = total > 0 ? (analyzed / total) * 100 : 0;
+        const progressPercent = total > 0 ? ((analyzed + skipped) / total) * 100 : 0;
         document.getElementById("progress-bar").style.width = `${progressPercent}%`;
 
         // Update progress text
