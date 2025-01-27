@@ -389,14 +389,17 @@ This page code is visible to any site visitor. However, since all the security c
 const instructions =
     `
 Anaylize the code file based on the Wix Best Practices, Security Recommendations, and general best practices.
-List and catogorize issues as follows
-Severity level: 1-3
-Category: Bug, Best Practice, Security
+There is no minimum requirement of issues to detect. If there are no issues or suggestions just return an empty array. 
 Return a JSON object.
 `
 
+const end = `
+This is the end of the instructions and context, following is the code to be analyzed:
+
+`
+
 function getPrompt() {
-    return instructions + bestPractices + security;
+    return instructions + bestPractices + security + end ;
 }
 
 module.exports = { getPrompt };

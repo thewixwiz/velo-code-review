@@ -15,6 +15,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const UPLOADS_DIR = "uploads";
 
+const MAX_FREE_ISSUES = 5;
+const MAX_ANALYSIS_FILES = 50;
+const MAX_FILE_CHARACTERS = 5000;
+
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true })); // Parse form fields
 app.use(express.json()); // Handle JSON payloads
@@ -47,7 +51,6 @@ function deleteFolderRecursive(folderPath) {
 
 // Upload ZIP file endpoint
 app.post("/upload", upload.single("codeFolder"), async (req, res) => {
-    if (!req.file) return res.status(400).send("No file uploaded.");
 
     let data = {
         files: {
@@ -58,10 +61,7 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
         issues: [],
         totalIssues: 0,
     }
-    const { email, website, experiance, role } = req.body;
-
-    const zipPath = path.join(UPLOADS_DIR, req.file.filename);
-    const extractPath = path.join(UPLOADS_DIR, req.file.filename.replace(".zip", ""));
+    const { email, website, experiance, role, pastedCode } = req.body;
 
     // Set up SSE headers
     res.setHeader("Content-Type", "text/event-stream");
@@ -72,10 +72,54 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
 
-    sendEvent({ message: "Unzipping files..." });
-
     const uploadResponse = await axios.get('https://www.thewixwiz.com/_functions/veloReview/upload');
 
+    console.log("pasted code", pastedCode)
+
+     // Case 1: If user pasted code instead of uploading a file
+     if (pastedCode && pastedCode.trim().length > 0) {
+        try {
+            sendEvent({ message: "Analyzing pasted code..." });
+
+            let snippet = pastedCode.length > MAX_FILE_CHARACTERS 
+                ? pastedCode.slice(0, MAX_FILE_CHARACTERS) 
+                : pastedCode;
+
+            const result = await analyzeCode(snippet, "pasted_code.js");
+
+            if (result) {
+                data.files.analyzed = 1;
+                data.files.total = 1;
+                data.issues = [...data.issues, ...result];
+                data.totalIssues = data.issues.length;
+            }
+
+            await axios.post("https://www.thewixwiz.com/_functions/veloReview/save", {
+                email,
+                website,
+                experiance,
+                role,
+                results: JSON.stringify(data),
+                pastedCode
+            })
+
+            // Send analysis results
+            sendEvent({ message: "Analysis complete!", status: "complete", data });
+            res.end();
+        } catch (err) {
+            console.error("❌ Error analyzing pasted code:", err);
+            sendEvent({ error: "Error analyzing pasted code." });
+            res.end();
+        }
+        return;
+    }
+
+    if (!req.file) return res.status(400).send("No file uploaded.");
+
+    const zipPath = path.join(UPLOADS_DIR, req.file.filename);
+    const extractPath = path.join(UPLOADS_DIR, req.file.filename.replace(".zip", ""));
+
+    sendEvent({ message: "Unzipping files..." });
 
     const fileStream = fs.createReadStream(zipPath);
 
@@ -106,9 +150,6 @@ app.post("/upload", upload.single("codeFolder"), async (req, res) => {
             sendEvent({ message: "Extraction complete. Starting Anaylsis...", data });
 
             try {
-                const MAX_FREE_ISSUES = 5;
-                const MAX_ANALYSIS_FILES = 50;
-                const MAX_FILE_CHARACTERS = 5000;
                 for (const [filePath, content] of Object.entries(codeFiles)) {
                     
                     if (data.files.analyzed >= MAX_ANALYSIS_FILES) {

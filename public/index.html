@@ -49,10 +49,19 @@
             </select>
 
         </div>
-        <input type="file" id="fileInput" accept=".zip" required>
+        <input type="file" id="fileInput" accept=".zip">
         <p class="small">Only the first 5000 characters of up to 50 files will be analysed.</p>
         <a href="https://sable-snowshoe-833.notion.site/Velo-Review-Guide-181a0672c4c3802aae80cbc3b4b2f0a4?pvs=4" target="_blank">How to get my Velo files?</a>
-        <button id="submitButton" type="submit">Upload and Review</button>
+        
+        <label for="codeInput"><strong>Or Paste Your Code Below</strong></label>
+        <textarea id="codeInput" placeholder="Paste your code here..." rows="10" maxlength="5000" style="width: 100%; font-family: monospace;"></textarea>
+        <p class="small">Only the first 5000 characters will be analyzed.</p>
+
+        <p id="error-message" class="error" style="color: red; display: none;">
+            Please either upload a file or paste your code before submitting.
+        </p>        
+
+        <button id="submitButton" type="submit">Submit for Review</button>
         <p class="small">Below you will see the first 5 results. The full report link will be sent to the email provided.</p>
     </form>
     <br>

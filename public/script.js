@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
+
 function showLoader() {
     document.getElementById("loader").style.display = "block";
 }
@@ -51,23 +52,47 @@ async function fetchDataById(id) {
 }
 
 function initiateUploadForm() {
+    const fileInput = document.getElementById("fileInput");
+    const codeInput = document.getElementById("codeInput");
+
+    codeInput.addEventListener("change", (e) => {
+        fileInput.disabled = codeInput.value.length > 0
+    })
+
+    fileInput.addEventListener("change", (e) => {
+        codeInput.disabled = fileInput.files.length > 0
+    })
+
+
     document.getElementById("uploadForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const fileInput = document.getElementById("fileInput").files[0];
+        const files = fileInput.files[0];
+        const code = codeInput.value.trim();
         const email = document.getElementById("emailInput").value;
         const website = document.getElementById("websiteInput").value;
         const experience = document.getElementById("experienceInput").value;
         const role = document.getElementById("roleInput").value;
+        const errorMessage = document.getElementById("error-message");
 
-        if (!fileInput) return alert("Please select a file");
+        // Validate that either file or pasted code is provided
+        if (!files && !code) {
+            errorMessage.style.display = "block";
+            return;
+        } else {
+            errorMessage.style.display = "none";
+        }
 
         const formData = new FormData();
         formData.append("email", email);
         formData.append("website", website);
         formData.append("experiance", experience);
         formData.append("role", role);
-        formData.append("codeFolder", fileInput);
+        if (files) {
+            formData.append("codeFolder", files);
+        } else {
+            formData.append("pastedCode", code);
+        }
 
         document.getElementById("status").innerText = "Uploading and analyzing...";
         document.getElementById("results-table").innerHTML = ""; // Clear old results
@@ -77,7 +102,7 @@ function initiateUploadForm() {
         document.getElementById("submitButton").disabled = true;
 
         try {
-            document.getElementById("uploadForm").style.display = "none"; 
+            document.getElementById("uploadForm").style.display = "none";
 
             const response = await fetch("/upload", {
                 method: "POST",
